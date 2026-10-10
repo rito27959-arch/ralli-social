@@ -16,7 +16,17 @@ async function load() {
 function diagnostic(stage, error) {
   const code = typeof error?.code === 'string' && /^[A-Z_]{2,40}$/.test(error.code) ? error.code : 'NONE';
   const name = typeof error?.name === 'string' && /^[A-Za-z]{1,40}$/.test(error.name) ? error.name : 'Error';
-  return new Response(JSON.stringify({ stage, code, name }), {
+  const message = typeof error?.message === 'string' ? error.message : '';
+  const trace = typeof error?.stack === 'string' ? error.stack : '';
+  const source = ['rolldown', 'sharp', 'firebase-admin', '@vercel/routing-utils', 'astro', 'react'].find((module) =>
+    message.includes(module) || trace.includes('/node_modules/' + module + '/')) || 'unknown';
+  const reason = /native binding/i.test(message) ? 'native-binding'
+    : /cannot find|not found|could not resolve/i.test(message) ? 'missing-dependency'
+    : /invalid|unsupported/i.test(message) ? 'invalid-runtime'
+    : /permission|access denied/i.test(message) ? 'permissions'
+    : /environment|configuration|config/i.test(message) ? 'configuration'
+    : 'unknown';
+  return new Response(JSON.stringify({ stage, code, name, source, reason }), {
     status: 500,
     headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' }
   });
