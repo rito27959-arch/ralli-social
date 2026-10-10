@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';import Simulator from '../../components/Simulator';
-import {adminDb} from '../../lib/firebase.server';
 import {csrf} from '../../lib/session';
+const {adminDb}=await import('../../lib/firebase.server');
 const reports=await adminDb().collection('reports').where('status','==','open').limit(25).get();
 const token=csrf(Astro.cookies);
 ---
