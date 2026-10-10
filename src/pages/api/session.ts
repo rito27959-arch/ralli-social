@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { adminAuth, adminDb } from '../../lib/firebase.server';
 import { sameOrigin } from '../../lib/session';
 
 export const POST:APIRoute=async ({request,cookies})=>{
@@ -8,6 +7,7 @@ export const POST:APIRoute=async ({request,cookies})=>{
  try {
   const token=request.headers.get('authorization')?.replace(/^Bearer /,'');
   if(!token) return new Response('Token absent',{status:401});
+  const {adminAuth,adminDb}=await import('../../lib/firebase.server');
   const decoded=await adminAuth().verifyIdToken(token,true);
   if(decoded.email && !decoded.email_verified)return new Response('Adresse électronique non vérifiée',{status:403});
   if(Date.now()/1000 - decoded.auth_time > 300) return new Response('Connexion trop ancienne',{status:401});

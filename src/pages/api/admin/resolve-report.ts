@@ -1,11 +1,11 @@
 import type {APIRoute} from 'astro';
-import {adminAuth,adminDb} from '../../../lib/firebase.server';
 import {sameOrigin} from '../../../lib/session';
 export const POST:APIRoute=async ({request,cookies})=>{
  if(!sameOrigin(request)||request.headers.get('x-csrf-token')!==cookies.get('ralli_csrf')?.value)return new Response('CSRF',{status:403});
  try{
   const session=cookies.get('ralli_session')?.value;
   if(!session)return new Response('Non authentifié',{status:401});
+  const {adminAuth,adminDb}=await import('../../../lib/firebase.server');
   const user=await adminAuth().verifySessionCookie(session,true);
   if(user.admin!==true)return new Response('Accès refusé',{status:403});
   const {reportId}=await request.json() as {reportId?:string};
