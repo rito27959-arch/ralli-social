@@ -25,7 +25,7 @@ const app = getApps().length ? getApp() : initializeApp(config);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-export const functions = getFunctions(app);
+export const functions = getFunctions(app, 'europe-west1');
 export const googleProvider = new GoogleAuthProvider();
 
 if (typeof window !== 'undefined' && configured) {
