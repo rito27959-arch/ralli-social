@@ -1,11 +1,11 @@
 import { defineMiddleware } from 'astro:middleware';
-import { adminAuth } from './lib/firebase.server';
 export const onRequest=defineMiddleware(async (context,next)=>{
  const {pathname}=new URL(context.request.url);
  if(!pathname.startsWith('/app') && !pathname.startsWith('/admin'))return next();
  const cookie=context.cookies.get('ralli_session')?.value;
  if(!cookie)return context.redirect('/connexion');
  try {
+  const {adminAuth}=await import('./lib/firebase.server');
   const user=await adminAuth().verifySessionCookie(cookie,true);
   if(pathname.startsWith('/admin') && user.admin!==true)return new Response('Accès refusé',{status:403});
   context.locals.userId=user.uid;
