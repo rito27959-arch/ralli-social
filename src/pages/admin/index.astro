@@ -1,0 +1,8 @@
+---
+import Base from '../../layouts/Base.astro';import Simulator from '../../components/Simulator';
+import {adminDb} from '../../lib/firebase.server';
+import {csrf} from '../../lib/session';
+const reports=await adminDb().collection('reports').where('status','==','open').limit(25).get();
+const token=csrf(Astro.cookies);
+---
+<Base title="Administration — Ralli" privatePage><main id="content" class="admin-layout"><div class="admin-header"><a class="brand" href="/">ralli<span>✳</span></a><a href="/app">Retour à l’espace</a></div><span class="eyebrow">ACCÈS ADMINISTRATEUR VÉRIFIÉ</span><h1>Administration</h1><p>Les chiffres ci-dessous sont des hypothèses de simulation. Aucun revenu réel n’est affiché.</p><Simulator client:load/><section class="panel"><h2>Signalements ouverts</h2>{reports.empty?<p>Aucun signalement ouvert.</p>:<ul>{reports.docs.map(r=><li>{r.data().kind} · {r.data().reason} · <button class="button secondary review-report" data-id={r.id}>Marquer examiné</button></li>)}</ul>}<p id="review-status" role="status"></p></section></main><script define:vars={{token}}>document.querySelectorAll('.review-report').forEach(button=>button.addEventListener('click',async()=>{const res=await fetch('/api/admin/resolve-report',{method:'POST',headers:{'content-type':'application/json','x-csrf-token':token},body:JSON.stringify({reportId:button.dataset.id})});if(res.ok)button.parentElement?.remove();else document.querySelector('#review-status').textContent='Action refusée.'}));</script></Base>

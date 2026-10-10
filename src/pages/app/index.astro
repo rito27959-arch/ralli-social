@@ -1,0 +1,5 @@
+---
+import Base from '../../layouts/Base.astro';import SocialApp from '../../components/SocialApp';import {csrf} from '../../lib/session';
+const token=csrf(Astro.cookies);
+---
+<Base title="Mon espace — Ralli" privatePage><div id="content"><SocialApp client:only="react" csrf={token}/></div></Base>

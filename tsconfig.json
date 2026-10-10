@@ -1,0 +1,6 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": { "jsx": "react-jsx", "jsxImportSource": "react", "types": ["astro/client", "node"], "noUncheckedIndexedAccess": true },
+  "include": ["src/**/*", "tests/**/*", "astro.config.mjs"],
+  "exclude": ["functions", "dist", "node_modules"]
+}

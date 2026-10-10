@@ -1,0 +1,5 @@
+---
+import Base from '../layouts/Base.astro';import Header from '../components/Header.astro';import Auth from '../components/Auth';import {csrf} from '../lib/session';
+const token=csrf(Astro.cookies);
+---
+<Base title="Créer un compte — Ralli" privatePage><Header/><main id="content" class="auth-page"><Auth client:only="react" signup={true} csrf={token}/></main></Base>

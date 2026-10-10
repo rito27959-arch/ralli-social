@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.astro/
+.vercel/
+.env.local
+.env.*.local
+functions/lib/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+playwright-report/
+test-results/
